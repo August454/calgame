@@ -1,0 +1,149 @@
+/* style.css */
+
+/* 1. Setup & Variables */
+:root {
+    --bg-gradient: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    --dark-glass: rgba(16, 18, 27, 0.85);
+    --white-glass: rgba(255, 255, 255, 0.1);
+    --border-glass: rgba(255, 255, 255, 0.2);
+    --primary: #00f2ff;
+    --correct: #00ff88;
+    --wrong: #ff3333;
+    --text-main: #ffffff;
+}
+
+/* 2. Global Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Prompt', sans-serif;
+    background: var(--bg-gradient);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-main);
+    overflow: hidden;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 3. Card & Layout */
+.game-card {
+    background: var(--dark-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glass);
+    border-radius: 30px;
+    padding: 40px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 4. Inputs & Controls */
+input, select {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    border: 2px solid var(--white-glass);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-size: 1.1rem;
+    font-family: 'Prompt', sans-serif;
+    outline: none;
+    box-sizing: border-box; /* ป้องกัน Input ล้น Card */
+    transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus {
+    border-color: var(--primary);
+}
+
+/* 5. Buttons */
+.btn {
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+    border: none;
+    padding: 15px;
+    color: white;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    transition: transform 0.2s, filter 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.2);
+}
+
+.btn-secondary {
+    background: var(--white-glass);
+    border: 1px solid var(--border-glass);
+}
+
+.btn-danger {
+    background: linear-gradient(90deg, #ef4444, #b91c1c);
+}
+
+/* 6. Game Elements (HUD & Question) */
+.hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 15px 20px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+#question-display {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin: 30px 0;
+    min-height: 80px;
+}
+
+/* 7. Animations */
+.anim-correct {
+    color: var(--correct);
+    animation: pop 0.4s ease;
+}
+
+.anim-wrong {
+    color: var(--wrong);
+    animation: shake 0.4s ease;
+}
+
+@keyframes pop {
+    50% { transform: scale(1.15); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+/* 8. Helper Classes */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
