@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Dash: คิดเลขเสพสุข (Modern)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-main: #ffffff;
+            --primary: #00f2ff; /* Cyan Neon */
+            --secondary: #ff0055; /* Pink Neon */
+            --correct: #00ff88;
+            --wrong: #ff3333;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Prompt', sans-serif;
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism Container */
+        .game-card {
+            background: rgba(16, 18, 27, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        /* Typography & Elements */
+        h1 {
+            font-size: 2.8rem;
+            margin: 0 0 20px 0;
+            background: -webkit-linear-gradient(45deg, #00f2ff, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
+        }
+
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #cbd5e1; }
+        
+        input, select {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-family: 'Prompt', sans-serif;
+            transition: 0.3s;
+            outline: none;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            border: none;
+            padding: 15px 30px;
+            color: white;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            filter: brightness(1.2);
+        }
+
+        .btn-secondary { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .btn-danger { background: linear-gradient(90deg, #ef4444, #b91c1c); }
+        .btn-skip { background: transparent; border: 2px solid #fbbf24; color: #fbbf24; }
+        .btn-skip:hover { background: #fbbf24; color: #000; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        /* Game Elements */
+        .hidden { display: none !important; }
+        
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .heart { color: var(--secondary); margin-right: 5px; filter: drop-shadow(0 0 5px var(--secondary)); }
+        
+        #question-display {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 40px 0;
+            min-height: 80px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            letter-spacing: 2px;
+        }
+
+        /* Theme Colors Logic */
+        .theme-selector { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+        .theme-dot {
+            width: 35px; height: 35px; border-radius: 50%; cursor: pointer;
+            border: 3px solid transparent; transition: 0.3s;
+        }
+        .theme-dot:hover, .theme-dot.active { border-color: white; transform: scale(1.2); }
+
+        /* Animations */
+        @keyframes pop { 50% { transform: scale(1.1); } }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .anim-correct { color: var(--correct) !important; animation: pop 0.3s ease; text-shadow: 0 0 20px var(--correct) !important; }
+        .anim-wrong { color: var(--wrong) !important; animation: shake 0.4s ease; text-shadow: 0 0 20px var(--wrong) !important; }
+
+        /* Result Screen */
+        .score-big { font-size: 5rem; font-weight: 800; color: var(--primary); margin: 0; text-shadow: 0 0 30px var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div class="game-card" id="home-screen">
+        <h1>คิดเลขเสพสุข</h1>
+        <p style="opacity: 0.8; margin-top: -15px;">Happy Math Calculation</p>
+        
+        <div class="input-group">
+            <input type="text" id="player-name" placeholder="ชื่อของคุณ..." maxlength="12" style="text-align: center;">
+        </div>
+
+        <div class="input-group">
+            <label><i class="fas fa-layer-group"></i> ระดับความยาก</label>
+            <select id="difficulty">
+                <option value="1">🟢 ง่ายมาก (ป.4 - วงเล็บพื้นฐาน)</option>
+                <option value="2">🔵 ง่าย (ป.5-6 - ผสมเครื่องหมาย)</option>
+                <option value="3">🟡 กลาง (ม.1 - ยกกำลังในวงเล็บ)</option>
+                <option value="4">🟠 ยาก (ม.2 - รูทและสมการ)</option>
+                <option value="5">🔴 ยากมาก (ม.3 - แฟคทอเรียล/ซิกมา)</option>
+            </select>
+        </div>
+
+        <div class="theme-selector">
+            <div class="theme-dot active" style="background: linear-gradient(45deg, #ee7752, #e73c7e);" onclick="changeTheme(1, this)"></div>
+            <div class="theme-dot" style="background: linear-gradient(45deg, #23a6d5, #23d5ab);" onclick="changeTheme(2, this)"></div>
+            <div class="theme-dot" style="background: linear-gradient(45deg, #833ab4, #fd1d1d);" onclick="changeTheme(3, this)"></div>
+            <div class="theme-dot" style="background: linear-gradient(45deg, #11998e, #38ef7d);" onclick="changeTheme(4, this)"></div>
+        </div>
+
+        <div class="input-group" style="margin-top: 30px;">
+            <label style="text-align: center;">เลือกโหมดการเล่น</label>
+            <div class="grid-2">
+                <button class="btn btn-secondary" onclick="startGame('endless')"><i class="fas fa-infinity"></i> เอนเลส</button>
+                <button class="btn btn-secondary" onclick="startGame('timer')"><i class="fas fa-stopwatch"></i> จับเวลา</button>
+            </div>
+            <button class="btn btn-danger" onclick="startGame('survival')"><i class="fas fa-heart"></i> เอาชีวิตรอด</button>
+        </div>
+    </div>
+
+    <div class="game-card hidden" id="game-screen">
+        <div class="hud">
+            <div><i class="fas fa-user"></i> <span id="hud-name">Player</span></div>
+            <div>Score: <span id="hud-score" style="color: var(--primary);">0</span></div>
+            <div id="hud-status"></div>
+        </div>
+
+        <div id="question-display">Loading...</div>
+
+        <input type="number" id="answer-input" placeholder="คำตอบคือ..." onkeypress="if(event.key==='Enter') submitAnswer()">
+        
+        <div class="grid-2" style="margin-top: 20px;">
+            <button class="btn" onclick="submitAnswer()">ส่งคำตอบ</button>
+            <button class="btn btn-skip" onclick="skipQuestion()">ข้ามข้อ</button>
+        </div>
+        
+        <button class="btn btn-secondary" style="margin-top: 15px; font-size: 0.9rem; padding: 10px;" onclick="goHome()">
+            <i class="fas fa-arrow-left"></i> กลับหน้าหลัก
+        </button>
+    </div>
+
+    <div class="game-card hidden" id="result-screen">
+        <h2 style="font-size: 2rem;">จบเกมแล้ว!</h2>
+        <p id="result-msg">คุณทำได้เยี่ยมมาก</p>
+        <div class="score-big" id="final-score">0</div>
+        <p>คะแนน</p>
+        <button class="btn" onclick="goHome()">เล่นอีกครั้ง</button>
+    </div>
+
+    <script>
+        // --- Game Variables ---
+        let currentDiff = 1;
+        let currentMode = 'endless';
+        let score = 0;
+        let lives = 3;
+        let timeLeft = 60;
+        let gameTimer;
+        let currentAnswer = 0;
+        let isPlaying = false;
+
+        // --- Theme System ---
+        function changeTheme(id, el) {
+            document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
+            el.classList.add('active');
+            const root = document.documentElement
